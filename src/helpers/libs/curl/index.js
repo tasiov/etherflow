@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import EthersCalls from '../ethers';
 import curlToFetch from './curlToFetch';
 
 const curlTemplate = (curlCommand) => {
@@ -11,25 +12,33 @@ ${curlToFetch(curlCommand)}
 `.trim();
 };
 
-const curlCommands = {
-  web3_clientVersion: (url) =>
-    `curl ${url} -X POST --data '{"jsonrpc":"2.0","method":"web3_clientVersion","params":[],"id":67}'`,
+const curlCommands = _.keys(EthersCalls);
+
+const getCurlCommand = (url, method, args) => {
+  let filteredArgs = JSON.stringify(_.filter(args));
+  return `curl -X POST --data '{"jsonrpc":"2.0","method":"${method}","params":${filteredArgs},"id":1337}' ${url}`;
 };
 
-const curlExec = (method, url, proto, ...args) =>
-  eval(curlToFetch(curlCommands[method](url))).then((response) =>
-    response.json()
-  );
-
-const curlCodeSample = (method, url, ...args) =>
-  curlTemplate(curlCommands[method](url));
-
-const curlCalls = _.mapValues(
+const curlCalls = _.reduce(
   curlCommands,
-  (accum, method) => ({
-    exec: curlExec.bind(null, method),
-    codeSample: curlCodeSample.bind(null, method),
-  }),
+  (accum, method) => {
+    accum[method] = {
+      exec: async (url, proto, ...args) => {
+        const jsonResponse = await eval(
+          curlToFetch(getCurlCommand(url, method, args))
+        );
+        const response = await jsonResponse.json();
+        if (response.error) {
+          throw new Error(JSON.stringify(response.error));
+        }
+        return response.result;
+      },
+      codeSample: (url, ...args) =>
+        curlTemplate(getCurlCommand(url, method, args)),
+      args: EthersCalls[method].args,
+    };
+    return accum;
+  },
   {}
 );
 

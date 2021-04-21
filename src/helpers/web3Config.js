@@ -5,6 +5,7 @@ const Web3RpcCalls = {
     description: 'Returns the current client version.',
     web3: calls.web3.default.web3_clientVersion,
     ethers: calls.ethers.default.web3_clientVersion,
+    curl: calls.curl.default.web3_clientVersion,
   },
   web3_sha3: {
     description:

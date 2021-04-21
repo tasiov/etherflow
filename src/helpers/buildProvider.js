@@ -11,6 +11,8 @@ export default (web3Lib, web3URL) => {
         : new ethers.providers.JsonRpcProvider(web3URL);
   } else if (web3Lib === 'web3') {
     provider = new Web3(web3URL);
+  } else if (web3Lib === 'curl') {
+    provider = web3URL;
   }
 
   return [provider, proto];

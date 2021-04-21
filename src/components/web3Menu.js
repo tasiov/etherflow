@@ -19,6 +19,7 @@ const Web3Menu = ({ web3URL, web3Lib, setWeb3Lib }) => {
           </option>
           <option value="web3">Web3.js</option>
           <option value="ethers">Ethers.js</option>
+          <option value="curl">curl</option>
         </select>
 
         <MethodList web3URL={web3URL} web3Lib={web3Lib} />

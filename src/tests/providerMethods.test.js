@@ -2,7 +2,10 @@ import dotenv from 'dotenv';
 import _ from 'lodash';
 import buildProvider, { getHostingProvider } from '../helpers/buildProvider';
 import Web3RpcCalls from '../helpers/web3Config';
-import { getHostingProviderTests } from './providerMethodTestHelpers.js';
+import {
+  getAllMethods,
+  getHostingProviderTest,
+} from './providerMethodTestHelpers.js';
 
 dotenv.config();
 let shouldLog = false;
@@ -27,15 +30,15 @@ if (testOnlys) {
 const [provider, proto] = buildProvider(testLib, testProviderURL);
 
 describe(`${_.capitalize(hostingProvider)}: Web3 Methods`, function () {
-  const testMapping = getHostingProviderTests(hostingProvider);
-  const methods = _.keys(testMapping);
-  _.forEach(methods, (method, idx) => {
-    const { expectTest, args = [], only } = testMapping[method];
-
+  const methods = getAllMethods();
+  _.forEach(methods, (method) => {
+    const { expectTest, args = [], only = false } = getHostingProviderTest(
+      hostingProvider,
+      method
+    );
     if (testOnlys && !only) {
       return;
     }
-
     describe(method, function () {
       const web3Method = Web3RpcCalls[method];
       const { exec } = web3Method[testLib];

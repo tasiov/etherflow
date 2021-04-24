@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { HostingProviders } from '../helpers/buildProvider';
 
 const DummyArguments = {
@@ -9,6 +10,8 @@ const DummyArguments = {
     '0x54d0a5898fd551692c18d7e1004fe42dca18e09550b659215275788aea8a27ca',
   TXN_HASH:
     '0x819a6da5d6f4ce623ae5a660143f9c209824a0e2665d2eab9575752206dfee40',
+  TXN_SIGNED_DATA:
+    '0xf86c0a8502540be400825208944bbeeb066ed09b7aed07bf39eee0460dfa261520880de0b6b3a7640000801ca0f3ae52c1ef3300f44df0bcfd1341c232ed6134672b16e35699ae3f5fe2493379a023d23d2955a239dd6f61c4e8b2678d174356ff424eac53da53e17706c43ef871',
 };
 
 const TestType = {
@@ -30,6 +33,17 @@ const TestType = {
       }
     });
   },
+  errorTest: (errorMessage, execBound, shouldLog) => {
+    test('is not available', async () => {
+      try {
+        const result = await execBound();
+        if (shouldLog) console.log(result);
+      } catch (err) {
+        expect(err.message).toContain(errorMessage);
+        if (shouldLog) console.log(err.message);
+      }
+    });
+  },
   equalityTest: (matchValue, execBound, shouldLog) => {
     test('produces correct result', async () => {
       const result = await execBound();
@@ -43,7 +57,7 @@ const TestType = {
 };
 
 const ProviderMethodTestMapping = {
-  [HostingProviders.INFURA]: {
+  [HostingProviders.DEFAULT]: {
     web3_clientVersion: {
       expectTest: TestType.simpleTest,
     },
@@ -118,7 +132,6 @@ const ProviderMethodTestMapping = {
     eth_getCode: {
       expectTest: TestType.simpleTest,
       args: [DummyArguments.CONTRACT_ADDRESS, 'latest'],
-      only: true,
     },
     eth_sign: {
       expectTest: TestType.skipTest,
@@ -128,9 +141,15 @@ const ProviderMethodTestMapping = {
     },
     eth_sendTransaction: {
       expectTest: TestType.skipTest,
+    },
+    eth_sendRawTransaction: {
+      expectTest: TestType.errorTest.bind(
+        null,
+        'insufficient funds for gas * price + value'
+      ),
+      args: [DummyArguments.TXN_SIGNED_DATA],
       only: true,
     },
-    // eth_sendRawTransaction
     // eth_call
     // eth_estimateGas
     // eth_getBlockByHash
@@ -163,5 +182,9 @@ const ProviderMethodTestMapping = {
   },
 };
 
-export const getHostingProviderTests = (hostingProvider) =>
-  ProviderMethodTestMapping[hostingProvider];
+export const getAllMethods = () =>
+  _.keys(ProviderMethodTestMapping[HostingProviders.DEFAULT]);
+
+export const getHostingProviderTest = (hostingProvider, method) =>
+  _.get(ProviderMethodTestMapping, [hostingProvider, method]) ||
+  _.get(ProviderMethodTestMapping, [HostingProviders.DEFAULT, method]);

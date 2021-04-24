@@ -6,6 +6,7 @@ export const HostingProviders = {
   QUIKNODE: 'QUIKNODE',
   INFURA: 'INFURA',
   ALCHEMY: 'ALCHEMY',
+  DEFAULT: 'DEFAULT',
 };
 
 export const getHostingProvider = (web3URL) =>
@@ -17,7 +18,7 @@ export const getHostingProvider = (web3URL) =>
       }
       return accum;
     },
-    undefined
+    HostingProviders.DEFAULT
   );
 
 export default (web3Lib, web3URL) => {

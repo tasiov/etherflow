@@ -54,7 +54,13 @@ To test a specific web3 lib (web3, ethers, curl, etc..) against a node endpoint,
 In order to supply the parameters to the test you will need a `.env` file at the root of the directory.
 These are the parameters supported by the `.env` file, with examples.
 
+A `TEST_ONLYS` flag can be set to true if you'd like to test a small subset of the web3 methods. Leave it set to false to test all web3 methods.
+
+**All test addresses are ethereum mainnet addresses at the moment**
+
 ```txt
 TEST_PROVIDER_URL=https://mainnet.infura.io/v3/383a****
 TEST_LIB=ethers
+TEST_ONLYS=false
+TEST_LOGS=true
 ```

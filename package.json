@@ -4,7 +4,7 @@
   "description": "A web interface for debugging ethereum nodes",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "react-scripts test",
     "build:tailwind": "tailwindcss build src/tailwind.css -o src/tailwind.output.css",
     "prestart": "npm run build:tailwind",
     "prebuild": "npm run build:tailwind",
@@ -24,6 +24,7 @@
     "concurrently": "^5.2.0",
     "console-feed": "^3.0.0",
     "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
     "ethers": "^5.0.5",
     "express": "^4.17.1",
     "lodash": "^4.17.19",

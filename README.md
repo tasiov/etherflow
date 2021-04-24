@@ -47,3 +47,14 @@ Please feel free to add tests, change the code so it has better organization, et
 - [x] Enable ABI upload for smart contracts on eth_call
 - [x] Make trace_call use the ABI from point above (docs: https://openethereum.github.io/wiki/JSONRPC-trace-module)
 - [ ] Enable eth_newFilter for web3.js
+
+# Testing
+
+To test a specific web3 lib (web3, ethers, curl, etc..) against a node endpoint, run the command `npm run test`.
+In order to supply the parameters to the test you will need a `.env` file at the root of the directory.
+These are the parameters supported by the `.env` file, with examples.
+
+```txt
+TEST_PROVIDER_URL=https://mainnet.infura.io/v3/383a****
+TEST_LIB=ethers
+```

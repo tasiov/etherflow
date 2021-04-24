@@ -1,48 +1,40 @@
 import dotenv from 'dotenv';
-import buildProvider from '../helpers/buildProvider';
+import _ from 'lodash';
+import buildProvider, { getHostingProvider } from '../helpers/buildProvider';
 import Web3RpcCalls from '../helpers/web3Config';
+import { getHostingProviderTests } from './providerMethodTestHelpers.js';
 
 dotenv.config();
 
-describe('Web3 Methods', function () {
-  const testProviderURL = process.env.TEST_PROVIDER_URL;
-  expect(testProviderURL).not.toBeFalsy();
-  console.log('TEST_PROVIDER_URL', testProviderURL);
-  const testLib = process.env.TEST_LIB;
-  expect(testLib).not.toBeFalsy();
-  console.log('TEST_LIB', testLib);
+const testProviderURL = process.env.TEST_PROVIDER_URL;
+expect(testProviderURL).not.toBeFalsy();
+console.log('TEST_PROVIDER_URL', testProviderURL);
 
-  const [provider, proto] = buildProvider(testLib, testProviderURL);
+const testLib = process.env.TEST_LIB;
+expect(testLib).not.toBeFalsy();
+console.log('TEST_LIB', testLib);
 
-  const simpleMethods = [
-    'web3_clientVersion',
-    'net_version',
-    'net_listening',
-    'net_peerCount',
-    'eth_protocolVersion',
-    'eth_syncing',
-  ];
+const hostingProvider = getHostingProvider(testProviderURL);
+console.log('HOSTING_PROVIDER', hostingProvider);
 
-  simpleMethods.forEach((method) => {
-    describe(method, function () {
-      const web3Method = Web3RpcCalls[method];
-      const { exec } = web3Method[testLib];
+const [provider, proto] = buildProvider(testLib, testProviderURL);
 
-      test('should run successfully', async () => {
-        const result = await exec(provider, proto);
-        expect(result).toBeDefined();
+describe(`${_.capitalize(hostingProvider)}: Web3 Methods`, function () {
+  _.forEach(
+    getHostingProviderTests(hostingProvider),
+    ({ expectTest, args = [] }, method) => {
+      describe(method, function () {
+        const web3Method = Web3RpcCalls[method];
+        const { exec } = web3Method[testLib];
+        const execBound = exec.bind(null, provider, proto, ...args);
+        expectTest(execBound);
       });
-    });
-  });
+    }
+  );
 });
 
 // web3_sha3
 // eth_coinbase
-// eth_mining
-// eth_hashrate
-// eth_gasPrice
-// eth_accounts
-// eth_blockNumber
 // eth_getBalance
 // eth_getStorageAt
 // eth_getTransactionCount

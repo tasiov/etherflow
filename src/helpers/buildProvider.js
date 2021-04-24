@@ -1,5 +1,24 @@
 import { ethers } from 'ethers';
 import Web3 from 'web3';
+import _ from 'lodash';
+
+export const HostingProviders = {
+  QUIKNODE: 'QUIKNODE',
+  INFURA: 'INFURA',
+  ALCHEMY: 'ALCHEMY',
+};
+
+export const getHostingProvider = (web3URL) =>
+  _.reduce(
+    _.values(HostingProviders),
+    (accum, value) => {
+      if (_.includes(web3URL, _.lowerCase(value))) {
+        accum = value;
+      }
+      return accum;
+    },
+    undefined
+  );
 
 export default (web3Lib, web3URL) => {
   let provider;

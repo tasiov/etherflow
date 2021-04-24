@@ -6,13 +6,22 @@ dotenv.config();
 
 describe('Web3 Methods', function () {
   const testProviderURL = process.env.TEST_PROVIDER_URL;
-  const testLib = process.env.TEST_LIB;
   expect(testProviderURL).not.toBeFalsy();
+  console.log('TEST_PROVIDER_URL', testProviderURL);
+  const testLib = process.env.TEST_LIB;
   expect(testLib).not.toBeFalsy();
+  console.log('TEST_LIB', testLib);
 
   const [provider, proto] = buildProvider(testLib, testProviderURL);
 
-  const simpleMethods = ['web3_clientVersion'];
+  const simpleMethods = [
+    'web3_clientVersion',
+    'net_version',
+    'net_listening',
+    'net_peerCount',
+    'eth_protocolVersion',
+    'eth_syncing',
+  ];
 
   simpleMethods.forEach((method) => {
     describe(method, function () {
@@ -21,18 +30,13 @@ describe('Web3 Methods', function () {
 
       test('should run successfully', async () => {
         const result = await exec(provider, proto);
-        expect(result).toBeTruthy();
+        expect(result).toBeDefined();
       });
     });
   });
 });
 
 // web3_sha3
-// net_version
-// net_listening
-// net_peerCount
-// eth_protocolVersion
-// eth_syncing
 // eth_coinbase
 // eth_mining
 // eth_hashrate

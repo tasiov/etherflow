@@ -23,13 +23,14 @@ const curlCalls = _.reduce(
   curlCommands,
   (accum, method) => {
     accum[method] = {
-      exec: async (url, proto, ...args) => {
+      exec: async (provider, proto, ...args) => {
+        const url = provider.currentProvider.host;
         const jsonResponse = await eval(
           curlToFetch(getCurlCommand(url, method, args))
         );
         const response = await jsonResponse.json();
         if (response.error) {
-          throw new Error(JSON.stringify(response.error));
+          throw new Error(response.error.message);
         }
         return response.result;
       },

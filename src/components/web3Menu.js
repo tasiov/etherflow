@@ -2,6 +2,7 @@ import React from 'react';
 import { MethodList } from './methodList';
 
 const Web3Menu = ({ web3URL, web3Lib, setWeb3Lib }) => {
+  const allowCurl = web3URL && atob(web3URL).startsWith('https://');
   return (
     <div className="w-3/12 py-2 px-4 border-r border-gray-200 shadow-md h-screen overflow-hidden">
       <div>
@@ -19,7 +20,7 @@ const Web3Menu = ({ web3URL, web3Lib, setWeb3Lib }) => {
           </option>
           <option value="web3">Web3.js</option>
           <option value="ethers">Ethers.js</option>
-          <option value="curl">curl</option>
+          {allowCurl && <option value="curl">curl</option>}
         </select>
 
         <MethodList web3URL={web3URL} web3Lib={web3Lib} />

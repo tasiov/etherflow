@@ -12,8 +12,9 @@ export default (web3Lib, web3URL) => {
   } else if (web3Lib === 'web3') {
     provider = new Web3(web3URL);
   } else if (web3Lib === 'curl') {
-    provider = web3URL;
+    provider = new Web3(web3URL);
+  } else {
+    throw new Error(`web3Lib ${web3Lib} is not supported`);
   }
-
   return [provider, proto];
 };

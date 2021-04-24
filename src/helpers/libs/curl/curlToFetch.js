@@ -165,9 +165,6 @@ const parseCurl = (s, clean) => {
             break;
           case 'data':
           case 'data-binary':
-            out.headers['Content-Type'] ||
-              (out.headers['Content-Type'] =
-                'application/x-www-form-urlencoded');
             out.body = state === 'data' ? addArg(out.body, arg) : out.body;
             state = '';
             break;

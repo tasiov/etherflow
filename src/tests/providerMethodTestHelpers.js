@@ -181,28 +181,74 @@ const ProviderMethodTestMapping = {
         'balanceOf',
         DummyArguments.ACCOUNT_ADDRESS,
       ],
+    },
+    eth_estimateGas: {
+      expectTest: TestType.skipTest,
+    },
+    eth_getBlockByHash: {
+      expectTest: TestType.simpleTest,
+      args: [DummyArguments.BLOCK_HASH, true],
+    },
+    eth_getBlockByNumber: {
+      expectTest: TestType.simpleTest,
+      args: [DummyArguments.BLOCK_HEX, true],
+    },
+    eth_getTransactionByHash: {
+      expectTest: TestType.simpleTest,
+      args: [DummyArguments.TXN_HASH],
+    },
+    eth_getTransactionByBlockHashAndIndex: {
+      expectTest: TestType.simpleTest,
+      args: [DummyArguments.BLOCK_HASH, '0x0'],
+    },
+    eth_getTransactionByBlockNumberAndIndex: {
+      expectTest: TestType.simpleTest,
+      args: [DummyArguments.BLOCK_HEX, '0x0'],
+    },
+    eth_getTransactionReceipt: {
+      expectTest: TestType.simpleTest,
+      args: [DummyArguments.TXN_HASH],
+    },
+    eth_getUncleByBlockHashAndIndex: {
+      expectTest: TestType.simpleTest,
+      args: [DummyArguments.BLOCK_HASH, '0x0'],
+    },
+    eth_getUncleByBlockNumberAndIndex: {
+      expectTest: TestType.simpleTest,
+      args: [DummyArguments.BLOCK_HEX, '0x0'],
+    },
+    eth_getCompilers: {
+      expectTest: TestType.notAvailableTest,
+    },
+    eth_compileSolidity: {
+      expectTest: TestType.notAvailableTest,
+    },
+    eth_compileSerpent: {
+      expectTest: TestType.notAvailableTest,
+    },
+    // eth_newFilter
+    eth_newBlockFilter: {
+      expectTest: TestType.simpleTest,
       only: true,
     },
-    // eth_estimateGas
-    // eth_getBlockByHash
-    // eth_getBlockByNumber
-    // eth_getTransactionByHash
-    // eth_getTransactionByBlockHashAndIndex
-    // eth_getTransactionByBlockNumberAndIndex
-    // eth_getTransactionReceipt
-    // eth_getUncleByBlockHashAndIndex
-    // eth_getUncleByBlockNumberAndIndex
-    // eth_getCompilers
-    // eth_compileSolidity
-    // eth_compileSerpent
-    // eth_newFilter
-    // eth_newBlockFilter
-    // eth_newPendingTransactionFilter
-    // eth_uninstallFilter
-    // eth_getFilterChanges
-    // eth_getFilterLogs
-    // eth_getLogs
-    // eth_getWork
+    eth_newPendingTransactionFilter: {
+      expectTest: TestType.notAvailableTest,
+    },
+    eth_uninstallFilter: {
+      expectTest: TestType.skipTest,
+    },
+    eth_getFilterChanges: {
+      expectTest: TestType.skipTest,
+    },
+    eth_getFilterLogs: {
+      expectTest: TestType.skipTest,
+    },
+    eth_getLogs: {
+      expectTest: TestType.skipTest,
+    },
+    eth_getWork: {
+      expectTest: TestType.errorTest.bind(null, 'no mining work available yet'),
+    },
     trace_block: {
       expectTest: TestType.notAvailableTest,
     },

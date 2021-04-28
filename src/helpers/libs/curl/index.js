@@ -16,7 +16,9 @@ ${curlToFetch(curlCommand)}
 const curlCommands = _.keys(EthersCalls);
 
 const getCurlCommand = (url, method, args) => {
-  let filteredArgs = JSON.stringify(_.filter(args));
+  let filteredArgs = JSON.stringify(
+    _.filter(args, (arg) => !_.includes([null, undefined, ''], arg))
+  );
   return `curl -X POST --data '{"jsonrpc":"2.0","method":"${method}","params":${filteredArgs},"id":1337}' ${url}`;
 };
 
@@ -43,6 +45,8 @@ const curlCalls = _.reduce(
   },
   {}
 );
+
+// Overwritten methods
 
 curlCalls.eth_call = {
   exec: async (provider, proto, ...args) => {
@@ -90,5 +94,29 @@ curlCalls.eth_call = {
   },
   args: EthersCalls.eth_call.args,
 };
+
+_.forEach(['eth_getBlockByHash', 'eth_getBlockByNumber'], (method) => {
+  curlCalls[method] = {
+    exec: async (provider, proto, ...args) => {
+      const url = provider.currentProvider.host;
+      const filteredArgs = args.slice(0);
+      filteredArgs[1] = filteredArgs[1] === 'true';
+      const jsonResponse = await eval(
+        curlToFetch(getCurlCommand(url, method, filteredArgs))
+      );
+      const response = await jsonResponse.json();
+      if (response.error) {
+        throw new Error(response.error.message);
+      }
+      return response.result;
+    },
+    codeSample: (url, ...args) => {
+      const filteredArgs = args.slice(0);
+      filteredArgs[1] = filteredArgs[1] === 'true';
+      return curlTemplate(getCurlCommand(url, method, filteredArgs));
+    },
+    args: EthersCalls[method].args,
+  };
+});
 
 export default curlCalls;

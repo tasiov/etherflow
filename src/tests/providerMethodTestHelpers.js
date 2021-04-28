@@ -226,10 +226,16 @@ const ProviderMethodTestMapping = {
     eth_compileSerpent: {
       expectTest: TestType.notAvailableTest,
     },
-    // eth_newFilter
+    eth_newFilter: {
+      expectTest: TestType.simpleTest,
+      args: [
+        'earliest',
+        'latest',
+        DummyArguments.DAVID_GUETTA_CONTRACT_ADDRESS,
+      ],
+    },
     eth_newBlockFilter: {
       expectTest: TestType.simpleTest,
-      only: true,
     },
     eth_newPendingTransactionFilter: {
       expectTest: TestType.notAvailableTest,

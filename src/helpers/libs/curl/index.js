@@ -119,4 +119,35 @@ _.forEach(['eth_getBlockByHash', 'eth_getBlockByNumber'], (method) => {
   };
 });
 
+curlCalls.eth_newFilter = {
+  exec: async (provider, proto, ...args) => {
+    const url = provider.currentProvider.host;
+    const [fromBlock, toBlock, address, topics] = args;
+    const filter = [_.pickBy({ fromBlock, toBlock, address, topics }, Boolean)];
+    let jsonResponse = await eval(
+      curlToFetch(getCurlCommand(url, 'eth_newFilter', filter))
+    );
+    let response = await jsonResponse.json();
+    if (response.error) {
+      throw new Error(response.error.message);
+    }
+    jsonResponse = await eval(
+      curlToFetch(
+        getCurlCommand(url, 'eth_getFilterChanges', [response.result])
+      )
+    );
+    response = await jsonResponse.json();
+    if (response.error) {
+      throw new Error(response.error.message);
+    }
+    return response.result;
+  },
+  codeSample: (url, ...args) => {
+    const [fromBlock, toBlock, address, topics] = args;
+    const filter = [_.pickBy({ fromBlock, toBlock, address, topics }, Boolean)];
+    return curlTemplate(getCurlCommand(url, 'eth_newFilter', filter));
+  },
+  args: EthersCalls.eth_newFilter.args,
+};
+
 export default curlCalls;

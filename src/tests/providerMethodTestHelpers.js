@@ -12,6 +12,30 @@ const DummyArguments = {
     '0x819a6da5d6f4ce623ae5a660143f9c209824a0e2665d2eab9575752206dfee40',
   TXN_SIGNED_DATA:
     '0xf86c0a8502540be400825208944bbeeb066ed09b7aed07bf39eee0460dfa261520880de0b6b3a7640000801ca0f3ae52c1ef3300f44df0bcfd1341c232ed6134672b16e35699ae3f5fe2493379a023d23d2955a239dd6f61c4e8b2678d174356ff424eac53da53e17706c43ef871',
+  DAVID_GUETTA_CONTRACT_ADDRESS: '0x493495Ba108F3644eCAcb08041A445e5736022fF',
+  DAVID_GUETTA_CONTRACT_INPUT_ABI: JSON.stringify([
+    {
+      constant: true,
+      inputs: [
+        {
+          internalType: 'address',
+          name: 'tokenOwner',
+          type: 'address',
+        },
+      ],
+      name: 'balanceOf',
+      outputs: [
+        {
+          internalType: 'uint256',
+          name: 'balance',
+          type: 'uint256',
+        },
+      ],
+      payable: false,
+      stateMutability: 'view',
+      type: 'function',
+    },
+  ]),
 };
 
 const TestType = {
@@ -90,7 +114,7 @@ const ProviderMethodTestMapping = {
       expectTest: TestType.simpleTest,
     },
     eth_hashrate: {
-      expectTest: TestType.simpleTest,
+      expectTest: TestType.notAvailableTest,
     },
     eth_gasPrice: {
       expectTest: TestType.simpleTest,
@@ -148,9 +172,17 @@ const ProviderMethodTestMapping = {
         'insufficient funds for gas * price + value'
       ),
       args: [DummyArguments.TXN_SIGNED_DATA],
+    },
+    eth_call: {
+      expectTest: TestType.simpleTest,
+      args: [
+        DummyArguments.DAVID_GUETTA_CONTRACT_ADDRESS,
+        DummyArguments.DAVID_GUETTA_CONTRACT_INPUT_ABI,
+        'balanceOf',
+        DummyArguments.ACCOUNT_ADDRESS,
+      ],
       only: true,
     },
-    // eth_call
     // eth_estimateGas
     // eth_getBlockByHash
     // eth_getBlockByNumber
@@ -171,14 +203,30 @@ const ProviderMethodTestMapping = {
     // eth_getFilterLogs
     // eth_getLogs
     // eth_getWork
-    // trace_block
-    // trace_transaction
-    // trace_get
-    // trace_rawTransaction
-    // trace_replayBlockTransactions
-    // trace_replayTransaction
-    // trace_filter
-    // trace_call
+    trace_block: {
+      expectTest: TestType.notAvailableTest,
+    },
+    trace_transaction: {
+      expectTest: TestType.notAvailableTest,
+    },
+    trace_get: {
+      expectTest: TestType.notAvailableTest,
+    },
+    trace_rawTransaction: {
+      expectTest: TestType.notAvailableTest,
+    },
+    trace_replayBlockTransactions: {
+      expectTest: TestType.notAvailableTest,
+    },
+    trace_replayTransaction: {
+      expectTest: TestType.notAvailableTest,
+    },
+    trace_filter: {
+      expectTest: TestType.notAvailableTest,
+    },
+    trace_call: {
+      expectTest: TestType.notAvailableTest,
+    },
   },
 };
 

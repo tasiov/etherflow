@@ -11,8 +11,10 @@ import {
 } from './containers';
 import { AppProvider } from './context';
 import { Router } from '@reach/router';
+import Web3 from 'web3';
 
 import './tailwind.output.css';
+window.Web3 = Web3;
 
 const Wrapper = () => (
   <AppProvider>

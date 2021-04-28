@@ -8,24 +8,26 @@ import {
 } from './providerMethodTestHelpers.js';
 
 dotenv.config();
-let shouldLog = false;
 
 const testProviderURL = process.env.TEST_PROVIDER_URL;
 expect(testProviderURL).not.toBeFalsy();
-console.log('TEST_PROVIDER_URL', testProviderURL);
 
 const testLib = process.env.TEST_LIB;
 expect(testLib).not.toBeFalsy();
-console.log('TEST_LIB', testLib);
 
 const hostingProvider = getHostingProvider(testProviderURL);
-console.log('HOSTING_PROVIDER', hostingProvider);
 
 const testOnlys = process.env.TEST_ONLYS === 'true';
-if (testOnlys) {
-  console.log('TEST_ONLYS', testOnlys);
-  shouldLog = true;
-}
+const shouldLog = testOnlys;
+
+console.log(`
+ENV_VARS
+--------
+HOSTING_PROVIDER: ${hostingProvider}
+TEST_PROVIDER_URL: ${testProviderURL}
+TEST_LIB: ${testLib}
+TEST_ONLYS: ${testOnlys}
+`);
 
 const [provider, proto] = buildProvider(testLib, testProviderURL);
 

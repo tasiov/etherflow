@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import Web3 from 'web3';
 import EthersCalls from '../ethers';
 import curlToFetch from './curlToFetch';
 
@@ -42,5 +43,52 @@ const curlCalls = _.reduce(
   },
   {}
 );
+
+curlCalls.eth_call = {
+  exec: async (provider, proto, ...args) => {
+    const url = provider.currentProvider.host;
+    const [address = '', abi = '', method, ...rest] = args;
+    if (!_.every([address, abi, method])) {
+      return curlTemplate(getCurlCommand(url, 'eth_call', []));
+    }
+    let data;
+    try {
+      const abiToEncode = JSON.parse(abi)[0];
+      data = provider.eth.abi.encodeFunctionCall(abiToEncode, rest);
+    } catch (err) {
+      console.warn(err);
+      throw new Error('Failed to encode contract request data');
+    }
+    const params = [{ data, to: address }, 'latest'];
+    const jsonResponse = await eval(
+      curlToFetch(getCurlCommand(url, 'eth_call', params))
+    );
+    const response = await jsonResponse.json();
+    if (response.error) {
+      throw new Error(response.error.message);
+    }
+    return response.result;
+  },
+  codeSample: (url, ...args) => {
+    const provider = new Web3(url);
+    const [address = '', abi = '', method, rest] = args;
+    if (!_.every([address, abi, method])) {
+      return curlTemplate(getCurlCommand(url, 'eth_call', []));
+    }
+    let data;
+    try {
+      const contractArgs = rest ? rest.split(',').map(JSON.parse) : [];
+      const abiToEncode =
+        typeof abi === 'string' ? JSON.parse(atob(abi)) : abi[0];
+      data = provider.eth.abi.encodeFunctionCall(abiToEncode, contractArgs);
+    } catch (err) {
+      console.warn(err);
+      return curlTemplate(getCurlCommand(url, 'eth_call', []));
+    }
+    const params = [{ data, to: address }, 'latest'];
+    return curlTemplate(getCurlCommand(url, 'eth_call', params));
+  },
+  args: EthersCalls.eth_call.args,
+};
 
 export default curlCalls;
